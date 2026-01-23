@@ -1,21 +1,29 @@
 import supabase from "./supabase-client"
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 function Dashboard() {
 
+    const [metrics, setMetrics] = useState([]);
+
     async function fetchMetrics() {
-        // const { data, error } = await supabase
-        const response = await supabase
-            .from('sales_deals')
-            .select(
-                `
-                        name,
-                        value
-                        `,
-            )
-            .order('value', { ascending: false })
-            .limit(1);
-        console.log(response)
+
+        try {
+            const { data, error } = await supabase
+                .from('sales_deals')
+                .select(
+                    `
+            name,
+            value.sum()
+            `,
+                )
+            if (error) {
+                throw error;
+            }
+            console.log(data);
+            setMetrics(data);
+        } catch (error) {
+            console.error('Data fetching error: ', error)
+        }
     }
 
     useEffect(() => {
@@ -33,3 +41,14 @@ function Dashboard() {
 }
 
 export default Dashboard
+
+// const response = await supabase
+//             .from('sales_deals')
+//             .select(
+//                 `
+//                         name,
+//                         value
+//                         `,
+//             )
+//             .order('value', { ascending: false })
+//             .limit(1);
