@@ -1,5 +1,6 @@
 import supabase from "./supabase-client"
 import { useEffect, useState } from 'react'
+import { Chart } from 'react-charts'
 
 function Dashboard() {
 
@@ -21,6 +22,7 @@ function Dashboard() {
             }
             console.log(data);
             setMetrics(data);
+
         } catch (error) {
             console.error('Data fetching error: ', error)
         }
@@ -28,13 +30,83 @@ function Dashboard() {
 
     useEffect(() => {
         fetchMetrics()
+
+        const channel = supabase
+            .channel('deal_changes')
+            .on(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'sales_deals'
+                },
+                (payload) => {
+                    fetchMetrics();
+                    console.log(payload.new)
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        }
     }, []);
 
+    const chartData = [
+        {
+            data: metrics.map((m) => ({
+                primary: m.name,
+                secondary: m.sum,
+            })),
+        }
+    ]
+
+    function y_max() {
+        if (metrics.length > 0) {
+            const maxSum = Math.max(...metrics.map((m) => m.sum));
+            return maxSum + 2000;
+        }
+        return 5000;
+    }
+
+    const primaryAxis = {
+        getValue: (d) => d.primary,
+        scaleType: 'band',
+        padding: 0.2,
+        position: 'bottom'
+    };
+
+    const secondaryAxes = [
+        {
+            getValue: (d) => d.secondary,
+            scaleType: 'linear',
+            min: 0,
+            max: y_max(),
+            padding: {
+                top: 20,
+                bottom: 40,
+            }
+        }
+    ]
 
     return (
         <div className="dashboard-wrapper">
             <div className="chart-container">
                 <h2>Total Sales This Quarter ($)</h2>
+                <div style={{ width: '100', height: '400px' }}>
+                    <Chart
+                        options={{
+                            data: chartData,
+                            primaryAxis,
+                            secondaryAxes,
+                            type: 'bar',
+                            defaultColors: ['#58d675'],
+                            tooltip: {
+                                show: false,
+                            }
+                        }}
+                    />
+                </div>
             </div>
         </div>
     )
