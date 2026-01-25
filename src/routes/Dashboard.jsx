@@ -25,7 +25,7 @@ function Dashboard() {
             setMetrics(data);
 
         } catch (error) {
-            console.error('Data fetching error: ', error)
+            console.error('Data fetching error: ', error.message)
         }
     }
 
