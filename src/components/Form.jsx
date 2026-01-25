@@ -1,6 +1,8 @@
 import { useActionState } from 'react';
+import supabase from '../supabase-client';
 
 function Form({ metrics }) {
+
     const [error, submitAction, isPending] = useActionState(
         async (previousState, formData) => {
             const newDeal = {
@@ -8,6 +10,13 @@ function Form({ metrics }) {
                 value: formData.get('value')
             };
             console.log(newDeal);
+
+            const { error } = await supabase.from('sales_deals').insert(newDeal);
+
+            if (error) {
+                console.error('Error adding deal: ', error.message);
+                return new Error('Failed to add deal');
+            }
 
             return null;
         },
