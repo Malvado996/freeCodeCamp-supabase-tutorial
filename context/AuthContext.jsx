@@ -23,6 +23,11 @@ export const AuthContextProvider = ({ children }) => {
         }
         getInitialSession();
 
+        supabase.auth.onAuthStateChange((_event, session) => {
+            setSession(session);
+            console.log('Session changed: ', session)
+        });
+
     }, [])
 
     return (
