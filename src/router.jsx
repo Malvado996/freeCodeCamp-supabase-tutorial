@@ -1,13 +1,23 @@
 import { createBrowserRouter } from "react-router-dom";
 
 import Signin from '../src/components/Signin';
+import Signup from "./components/Signup";
 import Header from '../src/components/Header';
 import Dashboard from "./routes/Dashboard";
+import RootRedirect from "./routes/RootRedirect";
 
 export const router = createBrowserRouter([
     {
         path: '/',
+        element: <RootRedirect />,
+    },
+    {
+        path: '/signin',
         element: <Signin />,
+    },
+    {
+        path: '/signup',
+        element: <Signup />,
     },
     {
         path: '/dashboard',
