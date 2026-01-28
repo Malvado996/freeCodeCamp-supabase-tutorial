@@ -82,7 +82,6 @@ const Signin = () => {
                     <button
                         type="submit"
                         className="form-button"
-                        className="form-button"
                         aria-busy={isPending}
                     >
                         {isPending ? 'Signing in' : 'Sign in'}
