@@ -3,6 +3,11 @@ import { useAuth } from '../../context/AuthContext';
 import { useActionState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+// import { Link } from 'react-router-dom';
+// import { useAuth } from '../../context/AuthContext';
+// import { useActionState } from 'react';
+// import { useNavigate } from 'react-router-dom';
+
 const Signup = () => {
     const { signUpNewUser } = useAuth();
     const navigate = useNavigate();
